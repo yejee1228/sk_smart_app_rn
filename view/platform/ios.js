@@ -5,7 +5,7 @@ import { WebView } from "react-native-webview";
 
 
 const iosWebView = ({ url }) => {
-    
+
     //뒤로가기 설정
     const INJECTED_JAVASCRIPT = `(function() {
         AsyncStorage.setItem("memberCode", 1);
@@ -52,26 +52,29 @@ const iosWebView = ({ url }) => {
     //intent 설정
 
     return (
-        <View style={styles.root}>
-            <View style={styles.browserContainer}>
-                <WebView
-                    ref={(ref) => {setBrowserRef(ref);}}
-                    source={{uri: url}}
-                    startInLoadingState
-                    originWhitelist={['*']}
-                    renderLoading={() => (
-                        <View style={{ flex: 1, alignItems: "center" }}>
-                            <ActivityIndicator size="large" />
-                        </View>
-                    )}
-                    allowsBackForwardNavigationGestures
-                    onNavigationStateChange={(navState) =>onNavigationStateChange(navState)}
-                    injectedJavaScript={INJECTED_JAVASCRIPT}
-                    onMessage={(event) => { }}
-                    onShouldStartLoadWithRequest={event => {return onShouldStartLoadWithRequest(event);}}
-                />
-            </View>
-        </View>
+        <>
+            <StatusBar barStyle="white-content" />
+            <SafeAreaView style={styles.root}>
+                <View style={styles.browserContainer}>
+                    <WebView
+                        ref={(ref) => { setBrowserRef(ref); }}
+                        source={{ uri: url }}
+                        startInLoadingState
+                        originWhitelist={['*']}
+                        renderLoading={() => (
+                            <View style={{ flex: 1, alignItems: "center" }}>
+                                <ActivityIndicator size="large" />
+                            </View>
+                        )}
+                        allowsBackForwardNavigationGestures
+                        onNavigationStateChange={(navState) => onNavigationStateChange(navState)}
+                        injectedJavaScript={INJECTED_JAVASCRIPT}
+                        onMessage={(event) => { }}
+                        onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event); }}
+                    />
+                </View>
+            </SafeAreaView>
+        </>
     );
 };
 
