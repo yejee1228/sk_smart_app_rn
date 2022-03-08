@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native'
-import Content from './view/content'
+import Content from './view/homeScreen'
 
 const styles = StyleSheet.create({
   container: {

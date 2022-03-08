@@ -5,6 +5,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 
 const androidWebView = ({ url }) => {
+
+    //뒤로가기 설정
     const INJECTED_JAVASCRIPT = `(function() {
         AsyncStorage.setItem("memberCode", 1);
         AsyncStorage.setItem("isApp", true);
@@ -14,7 +16,7 @@ const androidWebView = ({ url }) => {
     const webview = useRef(null);
     const [canGoBack, SetCanGoBack] = useState(false);
 
-    // 안드로이드의 하드웨어적인 뒤로가기 설정
+    // 하드웨어적인 뒤로가기 설정
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
@@ -31,7 +33,7 @@ const androidWebView = ({ url }) => {
         }, [canGoBack])
     );
 
-    // 안드로이드의 소프트웨어적인 뒤로가기 설정
+    // 소프트웨어적인 뒤로가기 설정
     const backPress = (navState) => {
         const { canGoBack } = navState;
 
@@ -49,6 +51,8 @@ const androidWebView = ({ url }) => {
         }
     };
 
+    
+    //intent 설정
     const onShouldStartLoadWithRequest = (event) => {
         if (
             event.url.startsWith('http://') ||
@@ -57,47 +61,30 @@ const androidWebView = ({ url }) => {
         ) {
             return true;
         }
-        if (Platform.OS === 'android') {
-            const SendIntentAndroid = require('react-native-send-intent');
-            SendIntentAndroid.isAppInstalled(event.url)
-                .then(data => alert(data + '+' + event.url
-                ))
-            SendIntentAndroid.openApp(event.url)
-                .then(isOpened => {
-                    if (!isOpened) { alert('앱 실행이 실패했습니다'); }
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-    
-            return false;
-    
-        } else {
-            Linking.openURL(event.url)
-                .catch(err => {
-                    alert('앱 실행이 실패했습니다. 설치가 되어있지 않은 경우 설치하기 버튼을 눌러주세요.');
-                });
-            return false;
-        }
-    };
+        const SendIntentAndroid = require('react-native-send-intent');
+        SendIntentAndroid.openAppWithUri(event.url)
+            .then(isOpened => {
+                if (!isOpened) { alert('앱 실행이 실패했습니다'); }
+            })
+            .catch(err => {
+                console.log(err);
+            });
 
+        return false;
+
+    };
+    //intent 설정
 
     return (
         <WebView
-            source={{
-                uri: url
-            }}
-            originWhitelist={['http://', 'https://', 'intent://', '*']}
-            onShouldStartLoadWithRequest={event => {
-                return onShouldStartLoadWithRequest(event);
-            }}
-            startInLoadingState
             ref={webview}
-            onNavigationStateChange={(navState) => {
-                SetCanGoBack(navState.canGoBack) + backPress(navState);
-            }}
+            source={{uri: url}}
+            originWhitelist={['*']}
+            startInLoadingState
+            onNavigationStateChange={(navState) => {SetCanGoBack(navState.canGoBack) + backPress(navState);}}
             injectedJavaScript={INJECTED_JAVASCRIPT}
             onMessage={(event) => { }}
+            onShouldStartLoadWithRequest={event => {return onShouldStartLoadWithRequest(event);}}
         />
     );
 };
