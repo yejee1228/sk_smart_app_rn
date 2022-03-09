@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import WebViewScreen from './WebViewScreen';
 
-const content = () => {
+const HomeViewScreen = () => {
     const Stack = createStackNavigator();
     return (
         <>
@@ -17,4 +17,4 @@ const content = () => {
     );
 };
 
-export default content;
+export default HomeViewScreen;

@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/core";
 import { useFocusEffect } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 
-const androidWebView = ({ url }) => {
+const Android = ({ url }) => {
     const INJECTED_JAVASCRIPT = `(function() {
         AsyncStorage.setItem("memberCode", 1);
         AsyncStorage.setItem("isApp", true);
@@ -120,4 +120,4 @@ const androidWebView = ({ url }) => {
     );
 };
 
-export default androidWebView;
+export default Android;

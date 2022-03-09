@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/core";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { WebView } from "react-native-webview";
 
-const iosWebView = ({ url }) => {
+const Ios = ({ url }) => {
 
     //뒤로가기 설정
     const INJECTED_JAVASCRIPT = `(function() {
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default iosWebView;
+export default Ios;

@@ -3,8 +3,8 @@ import { StyleSheet, View, Platform } from "react-native";
 import AndroidPlatform from './platform/Android';
 import IosPlatform from './platform/Ios';
 
-const webViewScreen = () => {
-    const url = "http://www.megasuccess.co.kr/m/mobile/mobileTI/login.mbl";
+const WebViewScreen = () => {
+    const url = "https://www.megahrd.co.kr/m/mobile/mobileTI/login.mbl";
     return (
         <View style={styles.root}>
             <View style={styles.browser}>
@@ -30,4 +30,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default webViewScreen;
+export default WebViewScreen;
