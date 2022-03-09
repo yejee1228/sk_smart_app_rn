@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native'
-import Content from './view/homeScreen'
+import HomeScreen from './view/HomeScreen'
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 const App = () => {
   return (
     <View style={styles.container}>
-      <Content/>
+      <HomeScreen/>
     </View>
   );
 };

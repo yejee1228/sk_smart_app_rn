@@ -79,7 +79,7 @@ const androidWebView = ({ url }) => {
 
 
     //자동로그인
-    // webview->rn. 
+    // webview->rn
     const handleOnMessage = ({nativeEvent}) => {
         console.log(nativeEvent.data);
         if(nativeEvent.data.autologin){

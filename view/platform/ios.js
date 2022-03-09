@@ -3,7 +3,6 @@ import { useNavigation } from "@react-navigation/core";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { WebView } from "react-native-webview";
 
-
 const iosWebView = ({ url }) => {
 
     //뒤로가기 설정

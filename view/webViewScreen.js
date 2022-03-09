@@ -4,7 +4,7 @@ import AndroidPlatform from './platform/Android';
 import IosPlatform from './platform/Ios';
 
 const webViewScreen = () => {
-    const url = "https://www.megahrd.co.kr/m/mobile/mobileTI/login.mbl";
+    const url = "http://www.megasuccess.co.kr/m/mobile/mobileTI/login.mbl";
     return (
         <View style={styles.root}>
             <View style={styles.browser}>
