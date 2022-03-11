@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Platform } from "react-native";
-import AndroidPlatform from './platform/AndroidP';
-import IosPlatform from './platform/IosP';
+import AndroidPlatform from './platform/Android';
+import IosPlatform from './platform/Ios';
 
 const WebViewScreen = () => {
     const url = "https://megac.megahrd.co.kr/m/mobile/mobileTI/login.mbl";
