@@ -4,16 +4,15 @@ import AndroidPlatform from './platform/Android';
 import IosPlatform from './platform/Ios';
 
 const WebViewScreen = () => {
-    const url = "https://www.megahrd.co.kr/m/mobile/mobileTI/login.mbl";
+    const url = "https://megac.megahrd.co.kr/m/mobile/mobileTI/login.mbl";
+    //const url = "https://skshieldus.megahrd.co.kr/m/mobile/mobileTI/login.mbl";
     return (
-        <View style={styles.root}>
             <View style={styles.browser}>
                 {Platform.OS === 'ios' ?
                     <IosPlatform url={url} /> :
                     <AndroidPlatform url={url} />
                 }
             </View>
-        </View>
     )
 }
 

@@ -1,22 +1,18 @@
 import React, { useRef, useState } from "react";
-import { BackHandler } from "react-native";
+import { BackHandler, KeyboardAvoidingView } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { useFocusEffect } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Android = ({ url }) => {
-    const INJECTED_JAVASCRIPT = `(function() {
-        AsyncStorage.setItem("memberCode", 1);
-        AsyncStorage.setItem("isApp", true);
-        })();`;
-
     const navigation = useNavigation();
     const webview = useRef(null);
     const [canGoBack, SetCanGoBack] = useState(false);
-    
+
     const handleSetRef = _ref => {
         webview = _ref;
-      };
+    };
 
     // 하드웨어적인 뒤로가기 설정
     useFocusEffect(
@@ -43,7 +39,7 @@ const Android = ({ url }) => {
             navigation.setParams({
                 isCanBack: {
                     title: "",
-                    onPress: () => webview.current.goBack(),
+                    onPress: onPress,
                 },
             });
         } else {
@@ -52,8 +48,9 @@ const Android = ({ url }) => {
             });
         }
     };
+    const onPress = () => webview.current.goBack()
 
-    
+
     //intent 설정
     const onShouldStartLoadWithRequest = (event) => {
         if (
@@ -79,22 +76,12 @@ const Android = ({ url }) => {
 
 
     //자동로그인
-    // webview->rn
-    const handleOnMessage = ({nativeEvent}) => {
-        console.log(nativeEvent.data);
-        if(nativeEvent.data.autologin){
-            AsyncStorage.setItem({'logininfo' : JSON.parse(nativeEvent)}, () => {
-                console.log('자동로그인')
-              });
-        }else{
-            AsyncStorage.setItem({'logininfo' : null }, () => {
-                console.log('자동로그인 아님')
-              });
-        }
+    const handleOnMessage = ({ nativeEvent }) => {
+        let data = JSON.parse(nativeEvent.data)
+        AsyncStorage.setItem('logininfo', JSON.stringify(data));
     };
 
 
-    // rn->webview 
     const sendMessage = () => {
         /* AsyncStorage.getItem('nickname', (err, result) => {
             const UserInfo = Json.parse(result);
@@ -102,21 +89,38 @@ const Android = ({ url }) => {
             console.log('휴대폰 : ' + UserInfo.phonnumber); //  출력 => 휴대폰 : 010-xxxx-xxxx
           });
  */
-        webview.current.postMessage(JSON.stringify(AsyncStorage.getItem('logininfo')));
+        AsyncStorage.getItem('logininfo', (e, d) => {
+            const loginInfo = JSON.parse(d);
+            alert(loginInfo.loginid + loginInfo.autologin);
+            if (loginInfo.autologin) {
+                alert(`${loginInfo.loginid} 로 자동로그인 고고`)
+                webview.current.injectJavaScript(`window.location.href="https://megac.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462`)
+                //webview.current.injectJavaScript(`window.location.href="https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793`)
+
+            }
+        })
     }
     return (
-        <WebView
-            ref={webview}
-            source={{uri: url}}
-            originWhitelist={['*']}
-            startInLoadingState
-            onNavigationStateChange={(navState) => {SetCanGoBack(navState.canGoBack) + backPress(navState);}}
-            injectedJavaScript={INJECTED_JAVASCRIPT}
-            onMessage={handleOnMessage}
-            onShouldStartLoadWithRequest={event => {return onShouldStartLoadWithRequest(event);}}
-            handleSetRef={handleSetRef}
-            handleEndLoading={sendMessage}
-        />
+        <KeyboardAvoidingView
+            style={{ flexGrow: 1 }}
+            keyboardVerticalOffset={-120}
+            behavior="padding"
+        >
+            <WebView
+                ref={webview}
+                source={{ uri: url }}
+                originWhitelist={['*']}
+                startInLoadingState
+                onNavigationStateChange={(navState) => { SetCanGoBack(navState.canGoBack) + backPress(navState); }}
+                onMessage={handleOnMessage}
+                onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event); }}
+                handleSetRef={handleSetRef}
+                handleEndLoading={sendMessage}
+                //javaScriptEnabled={true}
+                //domStorageEnabled={true}
+                textZoom={100}
+            />
+        </KeyboardAvoidingView>
     );
 };
 
