@@ -3,12 +3,13 @@ import { StatusBar } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import WebViewScreen from './WebViewScreen';
-//import { LogBox } from 'react-native';
+import { LogBox } from 'react-native';
 
 const HomeViewScreen = () => {
-    /* LogBox.ignoreLogs([
+    LogBox.ignoreLogs([
         'Non-serializable values were found in the navigation state',
-       ]); */
+        "[react-native-gesture-handler] Seems like you\'re using an old API with gesture components, check out new Gestures system!",
+       ]);
     const Stack = createStackNavigator();
     return (
         <>

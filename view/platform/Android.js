@@ -6,34 +6,31 @@ import { WebView } from "react-native-webview";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Android = ({ url }) => {
-    const navigation = useNavigation();
-    const webview = useRef(null);
-    const [canGoBack, SetCanGoBack] = useState(false);
-
-    const handleSetRef = _ref => {
-        webview = _ref;
-    };
+    const navigation = useNavigation()
+    const webview = useRef(null)
+    const [canGoBack, setCanGoBack] = useState(false)
+    const [start, setStart] = useState(false)
 
     // 하드웨어적인 뒤로가기 설정
     useFocusEffect(
         React.useCallback(() => {
             const onBackPress = () => {
                 if (webview.current && canGoBack) {
-                    webview.current.goBack();
-                    return true;
+                    webview.current.goBack()
+                    return true
                 } else {
-                    return false;
+                    return false
                 }
-            };
-            BackHandler.addEventListener("hardwareBackPress", onBackPress);
+            }
+            BackHandler.addEventListener("hardwareBackPress", onBackPress)
             return () =>
-                BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+                BackHandler.removeEventListener("hardwareBackPress", onBackPress)
         }, [canGoBack])
-    );
+    )
 
     // 소프트웨어적인 뒤로가기 설정
     const backPress = (navState) => {
-        const { canGoBack } = navState;
+        const { canGoBack } = navState
 
         if (canGoBack) {
             navigation.setParams({
@@ -41,13 +38,13 @@ const Android = ({ url }) => {
                     title: "",
                     onPress: onPress,
                 },
-            });
+            })
         } else {
             navigation.setParams({
                 isCanBack: null,
-            });
+            })
         }
-    };
+    }
     const onPress = () => webview.current.goBack()
 
 
@@ -58,52 +55,50 @@ const Android = ({ url }) => {
             event.url.startsWith('https://') ||
             event.url.startsWith('about:blank')
         ) {
-            return true;
+            return true
         }
-        const SendIntentAndroid = require('react-native-send-intent');
+        const SendIntentAndroid = require('react-native-send-intent')
         SendIntentAndroid.openAppWithUri(event.url)
             .then(isOpened => {
-                if (!isOpened) { alert('앱 실행이 실패했습니다'); }
+                if (!isOpened) { alert('앱 실행이 실패했습니다') }
             })
             .catch(err => {
-                console.log(err);
-            });
+                console.log(err)
+            })
 
-        return false;
+        return false
 
-    };
+    }
     //intent 설정
 
 
     //자동로그인
     const handleOnMessage = ({ nativeEvent }) => {
+        //login 정보 받음.
         let data = JSON.parse(nativeEvent.data)
-        AsyncStorage.setItem('logininfo', JSON.stringify(data));
-    };
-
+        AsyncStorage.setItem('logininfo', JSON.stringify(data))
+    }
 
     const sendMessage = () => {
-        /* AsyncStorage.getItem('nickname', (err, result) => {
-            const UserInfo = Json.parse(result);
-            console.log('닉네임 : ' + UserInfo.nickname); // 출력 => 닉네임 : User1 
-            console.log('휴대폰 : ' + UserInfo.phonnumber); //  출력 => 휴대폰 : 010-xxxx-xxxx
-          });
- */
-        AsyncStorage.getItem('logininfo', (e, d) => {
-            const loginInfo = JSON.parse(d);
-            alert(loginInfo.loginid + loginInfo.autologin);
-            if (loginInfo.autologin) {
-                alert(`${loginInfo.loginid} 로 자동로그인 고고`)
-                webview.current.injectJavaScript(`window.location.href="https://megac.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462`)
-                //webview.current.injectJavaScript(`window.location.href="https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793`)
+        //웹앱 로딩완료 시 실행
+        if (start === false) {
+            AsyncStorage.getItem('logininfo', (e, d) => {
+                if(d != null) {
+                    const loginInfo = JSON.parse(d)
+                    if (loginInfo.autologin) {
+                        webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462")`)
+                        //webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793")`)
 
-            }
-        })
+                    }
+                }
+            })
+            setStart(true)
+        }
     }
     return (
         <KeyboardAvoidingView
             style={{ flexGrow: 1 }}
-            keyboardVerticalOffset={-120}
+            keyboardVerticalOffset={-250}
             behavior="padding"
         >
             <WebView
@@ -111,17 +106,13 @@ const Android = ({ url }) => {
                 source={{ uri: url }}
                 originWhitelist={['*']}
                 startInLoadingState
-                onNavigationStateChange={(navState) => { SetCanGoBack(navState.canGoBack) + backPress(navState); }}
-                onMessage={handleOnMessage}
-                onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event); }}
-                handleSetRef={handleSetRef}
-                handleEndLoading={sendMessage}
-                //javaScriptEnabled={true}
-                //domStorageEnabled={true}
                 textZoom={100}
+                onNavigationStateChange={(navState) => { setCanGoBack(navState.canGoBack) + backPress(navState) }}
+                onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event) }}
+                onMessage={handleOnMessage}
+                onLoadStart={sendMessage}
             />
         </KeyboardAvoidingView>
-    );
-};
-
+    )
+}
 export default Android;
