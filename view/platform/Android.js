@@ -4,12 +4,24 @@ import { useNavigation } from "@react-navigation/core";
 import { useFocusEffect } from "@react-navigation/native";
 import { WebView } from "react-native-webview";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 const Android = ({ url }) => {
     const navigation = useNavigation()
     const webview = useRef(null)
     const [canGoBack, setCanGoBack] = useState(false)
     const [start, setStart] = useState(false)
+
+    const onSwipeDown = () => {
+        webview.current.reload()
+    }
+    const onSwipeLeft = () => {
+        webview.current.goForward()
+    }
+    const onSwipeRight = () => {
+        webview.current.goBack()
+    }
+
 
     // 하드웨어적인 뒤로가기 설정
     useFocusEffect(
@@ -45,8 +57,8 @@ const Android = ({ url }) => {
             })
         }
     }
-    const onPress = () => webview.current.goBack()
 
+    const onPress = () => webview.current.goBack()
 
     //intent 설정
     const onShouldStartLoadWithRequest = (event) => {
@@ -69,8 +81,6 @@ const Android = ({ url }) => {
         return false
 
     }
-    //intent 설정
-
 
     //자동로그인
     const handleOnMessage = ({ nativeEvent }) => {
@@ -83,11 +93,11 @@ const Android = ({ url }) => {
         //웹앱 로딩완료 시 실행
         if (start === false) {
             AsyncStorage.getItem('logininfo', (e, d) => {
-                if(d != null) {
+                if (d != null) {
                     const loginInfo = JSON.parse(d)
                     if (loginInfo.autologin) {
-                        webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462")`)
-                        //webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793")`)
+                        webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462")`)
+                        //webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793")`)
 
                     }
                 }
@@ -95,24 +105,38 @@ const Android = ({ url }) => {
             setStart(true)
         }
     }
+    
     return (
-        <KeyboardAvoidingView
-            style={{ flexGrow: 1 }}
-            keyboardVerticalOffset={-250}
-            behavior="padding"
-        >
-            <WebView
-                ref={webview}
-                source={{ uri: url }}
-                originWhitelist={['*']}
-                startInLoadingState
-                textZoom={100}
-                onNavigationStateChange={(navState) => { setCanGoBack(navState.canGoBack) + backPress(navState) }}
-                onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event) }}
-                onMessage={handleOnMessage}
-                onLoadStart={sendMessage}
-            />
-        </KeyboardAvoidingView>
+        <GestureRecognizer
+            onSwipeDown={onSwipeDown}
+            onSwipeLeft={onSwipeLeft}
+            onSwipeRight={onSwipeRight}
+            config={{
+                velocityThreshold: 0.3,
+                directionalOffsetThreshold: 80,
+            }}
+            style={{
+                flex: 1,
+            }}>
+            <KeyboardAvoidingView
+                style={{ flexGrow: 1 }}
+                keyboardVerticalOffset={-250}
+                behavior="padding"
+            >
+                <WebView
+                    ref={webview}
+                    source={{ uri: url }}
+                    originWhitelist={['*']}
+                    startInLoadingState
+                    allowsBackForwardNavigationGestures = {true}
+                    textZoom={100}
+                    onNavigationStateChange={(navState) => { setCanGoBack(navState.canGoBack) + backPress(navState) }}
+                    onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event) }}
+                    onMessage={handleOnMessage}
+                    onLoadStart={sendMessage}
+                />
+            </KeyboardAvoidingView>
+        </GestureRecognizer>
     )
 }
 export default Android;

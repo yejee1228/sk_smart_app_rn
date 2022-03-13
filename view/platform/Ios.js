@@ -1,15 +1,25 @@
 import React, { useState, useRef } from "react";
-import { KeyboardAvoidingView, Linking } from "react-native";
+import { Linking } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { StyleSheet, View, ActivityIndicator, SafeAreaView } from "react-native";
 import { WebView } from "react-native-webview";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import GestureRecognizer from 'react-native-swipe-gestures';
 
 const Ios = ({ url }) => {
     const navigation = useNavigation();
-    //const [browserRef, setBrowserRef] = useState(null)
     const [start, setStart] = useState(false)
     const webview = useRef(null);
+
+    const onSwipeDown = () => {
+        webview.current.reload()
+    }
+    const onSwipeLeft = () => {
+        webview.current.goForward()
+    }
+    const onSwipeRight = () => {
+        webview.current.goBack()
+    }
 
     const onNavigationStateChange = (navState) => {
         const { canGoBack } = navState;
@@ -27,7 +37,6 @@ const Ios = ({ url }) => {
             });
         }
     };
-
 
     //intent 설정
     const onShouldStartLoadWithRequest = (event) => {
@@ -47,8 +56,6 @@ const Ios = ({ url }) => {
         }
         return false;
     };
-    //intent 설정
-
 
     //자동로그인
     const handleOnMessage = ({ nativeEvent }) => {
@@ -75,11 +82,20 @@ const Ios = ({ url }) => {
     }
 
     return (
-        <>
+        <GestureRecognizer
+            onSwipeDown={onSwipeDown}
+            onSwipeLeft={onSwipeLeft}
+            onSwipeRight={onSwipeRight}
+            config={{
+                velocityThreshold: 0.3,
+                directionalOffsetThreshold: 80,
+            }}
+            style={{
+                flex: 1,
+            }}>
             <SafeAreaView style={styles.root}>
                 <View style={styles.browserContainer}>
                     <WebView
-                        //ref={(ref) => { setBrowserRef(ref); }}
                         ref = {webview}
                         source={{ uri: url }}
                         startInLoadingState
@@ -89,7 +105,6 @@ const Ios = ({ url }) => {
                                 <ActivityIndicator size="large" />
                             </View>
                         )}
-                        scrollEnabled={true}
                         allowsBackForwardNavigationGestures = {true}
                         onNavigationStateChange={(navState) => onNavigationStateChange(navState)}
                         onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event); }}
@@ -98,7 +113,7 @@ const Ios = ({ url }) => {
                     />
                 </View>
             </SafeAreaView>
-        </>
+        </GestureRecognizer>
     );
 };
 
