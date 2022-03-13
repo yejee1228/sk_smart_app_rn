@@ -1,19 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { KeyboardAvoidingView, Linking } from "react-native";
 import { useNavigation } from "@react-navigation/core";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ActivityIndicator, SafeAreaView } from "react-native";
 import { WebView } from "react-native-webview";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Ios = ({ url }) => {
-
-    //뒤로가기 설정
-    const INJECTED_JAVASCRIPT = `(function() {
-        AsyncStorage.setItem("memberCode", 1);
-        AsyncStorage.setItem("isApp", true);
-       
-      })();`;
-
     const navigation = useNavigation();
-    const [browserRef, setBrowserRef] = useState(null);
+    //const [browserRef, setBrowserRef] = useState(null)
+    const [start, setStart] = useState(false)
+    const webview = useRef(null);
 
     const onNavigationStateChange = (navState) => {
         const { canGoBack } = navState;
@@ -44,19 +40,47 @@ const Ios = ({ url }) => {
         }
         Linking.openURL(event.url)
             .catch(err => {
-                alert('앱 실행이 실패했습니다. 설치가 되어있지 않은 경우 설치하기 버튼을 눌러주세요.');
+                alert('실행을 실패했습니다. 설치가 되어있지 않은 경우 아쿠아 플레이어 앱을 설치해주세요.');
             });
+        if(event.url.includes('itms-appss://',0)){
+            webview.current.goBack()
+        }
         return false;
     };
     //intent 설정
 
+
+    //자동로그인
+    const handleOnMessage = ({ nativeEvent }) => {
+        //login 정보 받음.
+        let data = JSON.parse(nativeEvent.data)
+        AsyncStorage.setItem('logininfo', JSON.stringify(data))
+    }
+
+    const sendMessage = () => {
+        //웹앱 로딩완료 시 실행
+        if (start === false) {
+            AsyncStorage.getItem('logininfo', (e, d) => {
+                if(d != null) {
+                    const loginInfo = JSON.parse(d)
+                    if (loginInfo.autologin) {
+                        webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462")`)
+                        //webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type4.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793")`)
+
+                    }
+                }
+            })
+            setStart(true)
+        }
+    }
+
     return (
         <>
-            <StatusBar barStyle="white-content" />
             <SafeAreaView style={styles.root}>
                 <View style={styles.browserContainer}>
                     <WebView
-                        ref={(ref) => { setBrowserRef(ref); }}
+                        //ref={(ref) => { setBrowserRef(ref); }}
+                        ref = {webview}
                         source={{ uri: url }}
                         startInLoadingState
                         originWhitelist={['*']}
@@ -65,11 +89,12 @@ const Ios = ({ url }) => {
                                 <ActivityIndicator size="large" />
                             </View>
                         )}
-                        allowsBackForwardNavigationGestures
+                        scrollEnabled={true}
+                        allowsBackForwardNavigationGestures = {true}
                         onNavigationStateChange={(navState) => onNavigationStateChange(navState)}
-                        injectedJavaScript={INJECTED_JAVASCRIPT}
-                        onMessage={(event) => { }}
                         onShouldStartLoadWithRequest={event => { return onShouldStartLoadWithRequest(event); }}
+                        onMessage={handleOnMessage}
+                        onLoadStart={sendMessage}
                     />
                 </View>
             </SafeAreaView>
