@@ -11,9 +11,9 @@ const Ios = ({ url }) => {
     const [start, setStart] = useState(false)
     const webview = useRef(null);
 
-    const onSwipeDown = () => {
+    /* const onSwipeDown = () => {
         webview.current.reload()
-    }
+    } */
     const onSwipeLeft = () => {
         webview.current.goForward()
     }
@@ -83,7 +83,7 @@ const Ios = ({ url }) => {
 
     return (
         <GestureRecognizer
-            onSwipeDown={onSwipeDown}
+            //onSwipeDown={onSwipeDown}
             onSwipeLeft={onSwipeLeft}
             onSwipeRight={onSwipeRight}
             config={{

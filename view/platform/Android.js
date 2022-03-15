@@ -12,9 +12,10 @@ const Android = ({ url }) => {
     const [canGoBack, setCanGoBack] = useState(false)
     const [start, setStart] = useState(false)
 
-    const onSwipeDown = () => {
+    /* const onSwipeDown = () => {
+        if(webview.current.transferX)
         webview.current.reload()
-    }
+    } */
     const onSwipeLeft = () => {
         webview.current.goForward()
     }
@@ -108,7 +109,7 @@ const Android = ({ url }) => {
     
     return (
         <GestureRecognizer
-            onSwipeDown={onSwipeDown}
+            //onSwipeDown={onSwipeDown}
             onSwipeLeft={onSwipeLeft}
             onSwipeRight={onSwipeRight}
             config={{
@@ -120,7 +121,7 @@ const Android = ({ url }) => {
             }}>
             <KeyboardAvoidingView
                 style={{ flexGrow: 1 }}
-                keyboardVerticalOffset={-250}
+                keyboardVerticalOffset={-300}
                 behavior="padding"
             >
                 <WebView
