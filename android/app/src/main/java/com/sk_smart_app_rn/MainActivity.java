@@ -1,4 +1,4 @@
-package com.sk_smart_app_rn;
+package kr.co.megahrd.skshieldus;
 
 import com.facebook.react.ReactActivity;
 

@@ -12,10 +12,6 @@ const Android = ({ url }) => {
     const [canGoBack, setCanGoBack] = useState(false)
     const [start, setStart] = useState(false)
 
-    /* const onSwipeDown = () => {
-        if(webview.current.transferX)
-        webview.current.reload()
-    } */
     const onSwipeLeft = () => {
         webview.current.goForward()
     }
@@ -108,7 +104,6 @@ const Android = ({ url }) => {
     
     return (
         <GestureRecognizer
-            //onSwipeDown={onSwipeDown}
             onSwipeLeft={onSwipeLeft}
             onSwipeRight={onSwipeRight}
             config={{
