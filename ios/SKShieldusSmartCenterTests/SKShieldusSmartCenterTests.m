@@ -7,11 +7,11 @@
 #define TIMEOUT_SECONDS 600
 #define TEXT_TO_LOOK_FOR @"Welcome to React"
 
-@interface sk_smart_app_rnTests : XCTestCase
+@interface SKShieldusSmartCenterTests : XCTestCase
 
 @end
 
-@implementation sk_smart_app_rnTests
+@implementation SKShieldusSmartCenterTests
 
 - (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {

@@ -11,9 +11,6 @@ const Ios = ({ url }) => {
     const [start, setStart] = useState(false)
     const webview = useRef(null);
 
-    /* const onSwipeDown = () => {
-        webview.current.reload()
-    } */
     const onSwipeLeft = () => {
         webview.current.goForward()
     }
@@ -48,12 +45,7 @@ const Ios = ({ url }) => {
             return true;
         }
         Linking.openURL(event.url)
-            .catch(err => {
-                alert('실행을 실패했습니다. 설치가 되어있지 않은 경우 아쿠아 플레이어 앱을 설치해주세요.');
-            });
-        if(event.url.includes('itms-appss://',0)){
-            webview.current.goBack()
-        }
+        webview.current.goBack()
         return false;
     };
 
@@ -71,8 +63,9 @@ const Ios = ({ url }) => {
                 if(d != null) {
                     const loginInfo = JSON.parse(d)
                     if (loginInfo.autologin) {
-                        webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462&sso.redirect_url=/m/mobile/mobileTI/login.mbl")`)
-                        //webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793&sso.redirect_url=/m/mobile/mobileTI/login.mbl")`)
+                        webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462")`)
+                        //webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793")`)
+
                     }
                 }
             })
@@ -82,7 +75,6 @@ const Ios = ({ url }) => {
 
     return (
         <GestureRecognizer
-            //onSwipeDown={onSwipeDown}
             onSwipeLeft={onSwipeLeft}
             onSwipeRight={onSwipeRight}
             config={{

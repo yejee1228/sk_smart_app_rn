@@ -36,11 +36,12 @@ static void InitializeFlipper(UIApplication *application) {
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"sk_smart_app_rn"
+                                                   moduleName:@"SKShieldusSmartCenter"
                                             initialProperties:nil];
 
   if (@available(iOS 13.0, *)) {
       rootView.backgroundColor = [UIColor systemBackgroundColor];
+      rootView.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
   } else {
       rootView.backgroundColor = [UIColor whiteColor];
   }
