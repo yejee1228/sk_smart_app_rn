@@ -13,7 +13,7 @@ const HomeViewScreen = () => {
     const Stack = createStackNavigator();
     return (
         <>
-            <StatusBar barStyle='light-content'/>        
+            <StatusBar barStyle='dark-content' backgroundColor={'#ccc'}/>        
             <NavigationContainer>
                 <Stack.Navigator>
                     <Stack.Screen name="WebViewScreen" component={WebViewScreen} options={{ headerShown: false }} />

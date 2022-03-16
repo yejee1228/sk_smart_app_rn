@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import SplashScreen from 'react-native-splash-screen';
 import {View, StyleSheet} from 'react-native'
 import HomeScreen from './view/HomeScreen'
 
@@ -11,6 +12,12 @@ const styles = StyleSheet.create({
 });
 
 const App = () => {
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 1500);
+  }, []);
+
   return (
     <View style={styles.container}>
       <HomeScreen/>
