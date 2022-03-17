@@ -12,10 +12,6 @@ const Android = ({ url }) => {
     const [canGoBack, setCanGoBack] = useState(false)
     const [start, setStart] = useState(false)
 
-    /* const onSwipeDown = () => {
-        if(webview.current.transferX)
-        webview.current.reload()
-    } */
     const onSwipeLeft = () => {
         webview.current.goForward()
     }
@@ -97,9 +93,8 @@ const Android = ({ url }) => {
                 if (d != null) {
                     const loginInfo = JSON.parse(d)
                     if (loginInfo.autologin) {
-                        webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462")`)
-                        //webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793")`)
-
+                        //webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462&sso.redirect_url=/m/mobile/mobileTI/login.mbl")`)
+                        webview.current.injectJavaScript(`window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793&sso.redirect_url=/m/mobile/mobileTI/login.mbl")`)
                     }
                 }
             })
@@ -109,7 +104,6 @@ const Android = ({ url }) => {
     
     return (
         <GestureRecognizer
-            //onSwipeDown={onSwipeDown}
             onSwipeLeft={onSwipeLeft}
             onSwipeRight={onSwipeRight}
             config={{
