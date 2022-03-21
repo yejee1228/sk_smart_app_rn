@@ -7,9 +7,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 const Ios = ({ url }) => {
-    const navigation = useNavigation();
+    const navigation = useNavigation()
     const [start, setStart] = useState(false)
-    const webview = useRef(null);
+    const webview = useRef(null)
 
     const onSwipeLeft = () => {
         webview.current.goForward()
@@ -21,11 +21,14 @@ const Ios = ({ url }) => {
     const onNavigationStateChange = (navState) => {
         const { canGoBack } = navState;
 
+        if (!navState.url.includes("skshieldus.megahrd.co.kr")) {
+            Linking.openURL(navState.url).catch(err=>webview.current.goBack())
+        }
         if (canGoBack) {
             navigation.setParams({
                 isCanBack: {
                     title: "",
-                    onPress: () => browserRef.goBack(),
+                    onPress: () => webview.current.goBack(),
                 },
             });
         } else {
@@ -44,8 +47,8 @@ const Ios = ({ url }) => {
         ) {
             return true;
         }
-        Linking.openURL(event.url)
-        webview.current.goBack()
+        Linking.openURL(event.url).catch(err=>alert('error'))
+        
         return false;
     };
 
@@ -72,6 +75,7 @@ const Ios = ({ url }) => {
             setStart(true)
         }
     }
+    
 
     return (
         <GestureRecognizer
