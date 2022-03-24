@@ -123,6 +123,7 @@ const Android = ({ url }) => {
                     source={{ uri: url }}
                     originWhitelist={['*']}
                     startInLoadingState
+                    allowsFullscreenVideo={true}
                     allowsBackForwardNavigationGestures = {true}
                     textZoom={100}
                     onNavigationStateChange={(navState) => { setCanGoBack(navState.canGoBack) + backPress(navState) }}
