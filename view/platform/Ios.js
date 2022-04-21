@@ -1,22 +1,14 @@
 import React, { useState, useRef } from "react";
-import { Linking } from "react-native";
+import { Linking, TouchableWithoutFeedback } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { StyleSheet, View, ActivityIndicator, SafeAreaView } from "react-native";
 import { WebView } from "react-native-webview";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import GestureRecognizer from 'react-native-swipe-gestures';
 
 const Ios = ({ url }) => {
     const navigation = useNavigation()
     const [start, setStart] = useState(false)
     const webview = useRef(null)
-
-    const onSwipeLeft = () => {
-        webview.current.goForward()
-    }
-    const onSwipeRight = () => {
-        webview.current.goBack()
-    }
 
     const onNavigationStateChange = (navState) => {
         const { canGoBack } = navState;
@@ -47,7 +39,7 @@ const Ios = ({ url }) => {
         ) {
             return true;
         }
-        Linking.openURL(event.url).catch(err=>alert('error'))
+        Linking.openURL(event.url).then(webview.current.goBack()).catch(err=>alert('error'))
         
         return false;
     };
@@ -78,18 +70,10 @@ const Ios = ({ url }) => {
     
 
     return (
-        <GestureRecognizer
-            onSwipeLeft={onSwipeLeft}
-            onSwipeRight={onSwipeRight}
-            config={{
-                velocityThreshold: 0.3,
-                directionalOffsetThreshold: 80,
-            }}
-            style={{
-                flex: 1,
-            }}>
+        <TouchableWithoutFeedback>
             <SafeAreaView style={styles.root}>
-                <View style={styles.browserContainer}>
+                <View style = {styles.root}>
+                
                     <WebView
                         ref = {webview}
                         source={{ uri: url }}
@@ -108,7 +92,7 @@ const Ios = ({ url }) => {
                     />
                 </View>
             </SafeAreaView>
-        </GestureRecognizer>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -117,7 +101,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     browserContainer: {
-        flex: 2,
+        flex: 1, paddingHorizontal:16
     },
 });
 
