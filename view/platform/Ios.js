@@ -39,7 +39,11 @@ const Ios = ({ url }) => {
         ) {
             return true;
         }
-        Linking.openURL(event.url).then(webview.current.goBack()).catch(err=>alert('error'))
+        Linking.openURL(event.url)
+                .then(webview.current.goBack())
+                .catch(err=>
+                    Linking.openURL('https://itunes.apple.com/kr/app/aquanmanager/id1048325731')
+                )
         
         return false;
     };
