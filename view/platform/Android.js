@@ -1,79 +1,78 @@
-import React, {useRef, useState} from 'react';
-import {BackHandler, KeyboardAvoidingView} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import {WebView} from 'react-native-webview';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import GestureRecognizer from 'react-native-swipe-gestures';
+import React, { useRef, useState } from 'react'
+import { BackHandler, KeyboardAvoidingView } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
+import { WebView } from 'react-native-webview'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import GestureRecognizer from 'react-native-swipe-gestures'
 
-const Android = ({url}) => {
-  const webview = useRef(null);
-  const [canGoBack, setCanGoBack] = useState(false);
-  const [start, setStart] = useState(false);
+const Android = ({ url }) => {
+  const webview = useRef(null)
+  const [canGoBack, setCanGoBack] = useState(false)
+  const [start, setStart] = useState(false)
 
   // 하드웨어적인 뒤로가기 설정
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
         if (webview.current && canGoBack) {
-          webview.current.goBack();
-          return true;
+          webview.current.goBack()
+          return true
         } else {
-          return false;
+          return false
         }
-      };
-      BackHandler.addEventListener('hardwareBackPress', onBackPress);
-      return () =>
-        BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [canGoBack]),
-  );
+      }
+      BackHandler.addEventListener('hardwareBackPress', onBackPress)
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress)
+    }, [canGoBack])
+  )
 
   //intent 설정
-  const onShouldStartLoadWithRequest = event => {
+  const onShouldStartLoadWithRequest = (event) => {
     if (
       event.url.startsWith('http://') ||
       event.url.startsWith('https://') ||
       event.url.startsWith('about:blank')
     ) {
-      return true;
+      return true
     }
-    const SendIntentAndroid = require('react-native-send-intent');
+    const SendIntentAndroid = require('react-native-send-intent')
     SendIntentAndroid.openAppWithUri(event.url)
-      .then(isOpened => {
+      .then((isOpened) => {
         if (!isOpened) {
-          alert('앱 실행이 실패했습니다');
+          alert('앱 실행이 실패했습니다')
         }
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch((err) => {
+        console.log(err)
+      })
 
-    return false;
-  };
+    return false
+  }
 
   //자동로그인
-  const handleOnMessage = ({nativeEvent}) => {
+  const handleOnMessage = ({ nativeEvent }) => {
     //login 정보 받음.
-    let data = JSON.parse(nativeEvent.data);
-    AsyncStorage.setItem('logininfo', JSON.stringify(data));
-  };
+    let data = JSON.parse(nativeEvent.data)
+    AsyncStorage.setItem('logininfo', JSON.stringify(data))
+  }
 
   const sendMessage = () => {
     //웹앱 로딩완료 시 실행
     if (start === false) {
       AsyncStorage.getItem('logininfo', (e, d) => {
         if (d != null) {
-          const loginInfo = JSON.parse(d);
+          const loginInfo = JSON.parse(d)
           if (loginInfo.autologin) {
             //webview.current.injectJavaScript(`window.location.replace("https://megac.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000462&sso.redirect_url=/m/mobile/mobileTI/login.mbl")`)
             webview.current.injectJavaScript(
-              `window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793&sso.redirect_url=/m/mobile/mobileTI/login.mbl")`,
-            );
+              `window.location.replace("https://skshieldus.megahrd.co.kr/sso/sso/void.sso.type8.user?sso.login_id=${loginInfo.loginid}&sso.member_cmpy_code=CY000793&sso.redirect_url=/m/mobile/mobileTI/login.mbl")`
+            )
           }
         }
-      });
-      setStart(true);
+      })
+      setStart(true)
     }
-  };
+  }
 
   return (
     <GestureRecognizer
@@ -85,28 +84,28 @@ const Android = ({url}) => {
         flex: 1,
       }}>
       <KeyboardAvoidingView
-        style={{flexGrow: 1}}
+        style={{ flexGrow: 1 }}
         keyboardVerticalOffset={-300}
         behavior="padding">
         <WebView
           ref={webview}
-          source={{uri: url}}
+          source={{ uri: url }}
           originWhitelist={['*']}
           startInLoadingState
           allowsFullscreenVideo={true}
           allowsBackForwardNavigationGestures={true}
           textZoom={100}
-          onNavigationStateChange={navState => {
-            setCanGoBack(navState.canGoBack);
+          onNavigationStateChange={(navState) => {
+            setCanGoBack(navState.canGoBack)
           }}
-          onShouldStartLoadWithRequest={event => {
-            return onShouldStartLoadWithRequest(event);
+          onShouldStartLoadWithRequest={(event) => {
+            return onShouldStartLoadWithRequest(event)
           }}
           onMessage={handleOnMessage}
           onLoadStart={sendMessage}
         />
       </KeyboardAvoidingView>
     </GestureRecognizer>
-  );
-};
-export default Android;
+  )
+}
+export default Android
