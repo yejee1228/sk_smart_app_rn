@@ -4,7 +4,8 @@ import AndroidPlatform from './platform/Android';
 import IosPlatform from './platform/Ios';
 
 const WebViewScreen = () => {
-  const url = 'https://skshieldus.megahrd.co.kr';
+  // 임시 url 사용
+  const url = 'https://www.naver.com';
 
   return (
     <View style={styles.browser}>
