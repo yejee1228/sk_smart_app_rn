@@ -1,9 +1,10 @@
 import React, { useState, useRef } from 'react'
-import { Linking, TouchableWithoutFeedback } from 'react-native'
+import { Linking, TouchableWithoutFeedback, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/core'
 import { StyleSheet, View, ActivityIndicator, SafeAreaView } from 'react-native'
 import { WebView } from 'react-native-webview'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import RNFS from 'react-native-fs'
 
 const Ios = ({ url }) => {
   const navigation = useNavigation()
@@ -46,11 +47,57 @@ const Ios = ({ url }) => {
     return false
   }
 
-  //자동로그인
-  const handleOnMessage = ({ nativeEvent }) => {
+  //자동로그인, 다운로드
+  const handleOnMessage = async ({ nativeEvent }) => {
     //login 정보 받음.
     let data = JSON.parse(nativeEvent.data)
-    AsyncStorage.setItem('logininfo', JSON.stringify(data))
+    if (data.type === 'download') {
+      //다운로드
+      const url = data.url
+      const originalFileName = data.fileName
+      const downloadFolder = RNFS.DownloadDirectoryPath
+      console.log(downloadFolder)
+      try {
+        const uniqueFileName = await generateUniqueFileName(originalFileName, downloadFolder)
+        const destPath = `${RNFS.DownloadDirectoryPath}/${uniqueFileName}`
+        const options = {
+          fromUrl: url,
+          toFile: destPath,
+        }
+        const downloadResult = await RNFS.downloadFile(options)
+        downloadResult.promise
+          .then((result) => {
+            if (result.statusCode === 200) {
+              Alert.alert('다운로드 완료', `${uniqueFileName}가 다운로드 폴더에 저장되었습니다.`)
+            } else {
+              Alert.alert('다운로드 실패', '파일 다운로드가 실패했습니다.')
+            }
+          })
+          .catch((error) => {
+            console.error(error)
+            Alert.alert('오류', '다운로드에 오류가 발생했습니다. 고객센터에 문의해주세요.')
+          })
+      } catch (error) {
+        console.error(error)
+        Alert.alert('오류', '다운로드에 오류가 발생했습니다. 고객센터에 문의해주세요.')
+      }
+    } else {
+      //자동로그인
+      AsyncStorage.setItem('logininfo', JSON.stringify(data))
+    }
+  }
+
+  // 다운로드 파일명 수정
+  const generateUniqueFileName = async (originalFileName, folder) => {
+    let fileName = originalFileName
+    let counter = 1
+    const extension = fileName.split('.').pop()
+    const baseName = fileName.slice(0, -(extension.length + 1))
+    while (await RNFS.exists(`${folder}/${fileName}`)) {
+      fileName = `${baseName}(${counter}).${extension}`
+      counter++
+    }
+    return fileName
   }
 
   const sendMessage = () => {
