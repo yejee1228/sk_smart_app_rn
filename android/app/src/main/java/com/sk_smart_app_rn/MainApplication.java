@@ -2,18 +2,18 @@ package com.sk_smart_app_rn;
 
 import android.app.Application;
 import android.content.Context;
+import android.webkit.WebView;
+import com.burnweb.rnsendintent.RNSendIntentPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.burnweb.rnsendintent.RNSendIntentPackage;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import android.webkit.WebView;
 
 public class MainApplication extends Application implements ReactApplication {
 
