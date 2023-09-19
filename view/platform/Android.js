@@ -69,13 +69,13 @@ const Android = ({ url }) => {
 
   PushNotification.configure({
     onNotification: (notification) => {
+      const mimeType = notification.data.mimeType
       SendIntentAndroid.openFileChooser(
         {
-          subject: 'File subject', //optional,
           fileUrl: notification.data.filePath,
-          type: '*/*',
+          type: mimeType,
         },
-        'Open file with:'
+        '파일 열기'
       )
     },
     requestPermissions: false,
@@ -126,6 +126,7 @@ const Android = ({ url }) => {
   const downloadFile = async (data) => {
     const url = data.url
     const originalFileName = data.fileName
+    const mimeType = data.mimeType
     const downloadFolder = RNFS.DownloadDirectoryPath
 
     try {
@@ -145,6 +146,7 @@ const Android = ({ url }) => {
               message: uniqueFileName,
               data: {
                 filePath: destPath,
+                mimeType: mimeType,
               },
             })
           } else {

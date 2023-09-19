@@ -50,7 +50,8 @@ const App = () => {
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide()
-      AppVersionCheck()
+      // 버전체크
+      //AppVersionCheck()
     }, 1500)
   }, [])
 
