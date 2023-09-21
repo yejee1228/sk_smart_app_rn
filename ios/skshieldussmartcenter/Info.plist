@@ -4,6 +4,8 @@
 <dict>
 	<key>App Uses Non-Exempt Encryption</key>
 	<false/>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>true</string>	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -53,5 +55,9 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	  <key>LSApplicationQueriesSchemes</key>
+  <array>
+    <string>whatsapp</string>
+  </array>
 </dict>
 </plist>

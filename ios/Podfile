@@ -12,9 +12,6 @@ target 'skshieldussmartcenter' do
     :hermes_enabled => false
   )
 
-  pod 'react-native-webview', :path => '../node_modules/react-native-webview'
-
-  pod 'RNFS', :path => '../node_modules/react-native-fs'
 
   target 'skshieldussmartcenterTests' do
     inherit! :complete
